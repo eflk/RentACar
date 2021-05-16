@@ -6,38 +6,12 @@ using System.Collections.Generic;
 
 namespace Bussiness.Concrete
 {
-    public class ColorManager : IColorService
+    public class ColorManager : ManagerBase<Color>, IColorService
     {
-        IColorDal _colorDal;
-
-        public ColorManager(IColorDal colorDal)
+        public ColorManager(IColorDal colorDal) : base(colorDal)
         {
-            _colorDal = colorDal;
         }
 
-        public void Add(Color entity)
-        {
-            _colorDal.Add(entity);
-        }
-
-        public void Delete(Color entity)
-        {
-            _colorDal.Delete(entity);
-        }
-
-        public List<Color> GetAll()
-        {
-            return _colorDal.GetAll();
-        }
-
-        public Color GetById(int id)
-        {
-            return _colorDal.Get(c => c.Id == id);
-        }
-
-        public void Update(Color entity)
-        {
-            _colorDal.Update(entity);
-        }
+     
     }
 }

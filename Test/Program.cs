@@ -12,14 +12,17 @@ namespace Test
     {
         static void Main(string[] args)
         {
-
+            RentalServiceTest();
             while (true)
             {
                 Console.Clear();
                 List<object> managers = new List<object>() {
                     new ColorManager(new EfColorDal()) ,
                     new BrandManager(new EfBrandDal()) ,
-                    new CarManager(new EfCarDal())
+                    new CarManager(new EfCarDal()) ,
+                    new UserManager(new EfUserDal()) ,
+                    new CustomerManager(new EfCustomerDal()) ,
+                    new RentalManager(new EfRentalDal(), new CarManager(new EfCarDal()), new CustomerManager(new EfCustomerDal()))
                 };
 
                 int counter = 0;
@@ -73,6 +76,30 @@ namespace Test
                         if (Console.ReadKey().KeyChar == 'y')
                             SetEntity((IService<Car>)selectedManager);
                         break;
+                    case 4:
+                        writeAll((IService<User>)selectedManager);
+
+                        Console.WriteLine("=================================");
+                        Console.Write("Do you want to create new entry (y/n): ");
+                        if (Console.ReadKey().KeyChar == 'y')
+                            SetEntity((IService<User>)selectedManager);
+                        break;
+                    case 5:
+                        writeAll((IService<Customer>)selectedManager);
+
+                        Console.WriteLine("=================================");
+                        Console.Write("Do you want to create new entry (y/n): ");
+                        if (Console.ReadKey().KeyChar == 'y')
+                            SetEntity((IService<Customer>)selectedManager);
+                        break;
+                    case 6:
+                        writeAll((IService<Rental>)selectedManager);
+
+                        Console.WriteLine("=================================");
+                        Console.Write("Do you want to create new entry (y/n): ");
+                        if (Console.ReadKey().KeyChar == 'y')
+                            SetEntity((IService<Rental>)selectedManager);
+                        break;
                     default:
                         continue;
                 }
@@ -84,6 +111,16 @@ namespace Test
                 if (Console.ReadKey().KeyChar == 'q') break;
                 else Console.Clear();
             }
+        }
+
+        private static void RentalServiceTest()
+        {
+            var rm = new RentalManager(new EfRentalDal(), new CarManager(new EfCarDal()), new CustomerManager(new EfCustomerDal()));
+            var result = rm.RentACar(2, 1, DateTime.Now);
+            Console.WriteLine($"Is Success: {result.Success}, Message: {result.Message} ");
+            result = rm.DeliverACar(5, DateTime.Now);
+            Console.WriteLine($"Is Success: {result.Success}, Message: {result.Message} ");
+            Console.ReadKey();
         }
 
         private static void SetEntity<TType>(IService<TType> manager) where TType : class, IEntity, new()
@@ -99,7 +136,7 @@ namespace Test
                 var val = Console.ReadLine();
                 if (propertyInfo.Name.Equals("Id"))
                 {
-                    isUpdate = manager.GetById(Convert.ToInt32(val)) != null;
+                    isUpdate = manager.GetById(Convert.ToInt32(val)).Data != null;
                     if (!isUpdate) continue;
                 }
                 entity.GetType().GetProperty(propertyInfo.Name).SetValue(entity, Convert.ChangeType(val, propertyInfo.PropertyType));
@@ -120,7 +157,9 @@ namespace Test
         private static void writeAll<TType>(IService<TType> manager) where TType : class, IEntity, new()
         {
             Console.WriteLine("\n\n_" + typeof(TType) + " LIST:___________________________");
-            foreach (var oEntity in manager.GetAll())
+            var entityList = manager.GetAll().Data;
+            if (entityList != null)
+            foreach (var oEntity in entityList)
             {
                 Console.WriteLine("_____________________________");
                 foreach (var propertyInfo in oEntity.GetType().GetProperties())

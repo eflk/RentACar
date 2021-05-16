@@ -4,9 +4,9 @@ using Entities.Concrete;
 
 namespace Bussiness.Concrete
 {
-    public class BrandManager : ManagerBase<Brand>, IBrandService
+    public class UserManager : ManagerBase<User>, IUserService
     {
-        public BrandManager(IBrandDal brandDal) : base(brandDal)
+        public UserManager(IUserDal userDal) : base(userDal)
         {
         }
     }
