@@ -1,4 +1,6 @@
 ﻿using Bussiness.Abstract;
+using Bussiness.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -15,15 +17,22 @@ namespace Bussiness.Concrete
             _carDal = carDal;
         }
 
+        [ValidationAspect(typeof(CarValidator))]
         public override IResult Add(Car car)
         {
-            if (car.Description.Length < 10) throw new System.Exception("Açıklama minimum 10 hane olmalı");
             return base.Add(car);
         }
-       
-        public List<CarInfoDto> GetCarInfos()
+
+        [ValidationAspect(typeof(CarValidator))]
+        public override IResult Update(Car entity)
         {
-            return _carDal.GetCarInfos();
+            return base.Update(entity);
+        }
+
+
+        public IDataResult<List<CarInfoDto>> GetCarInfos()
+        {
+            return new SuccessDataResult<List<CarInfoDto>>(_carDal.GetCarInfos());
         }
     }
 }

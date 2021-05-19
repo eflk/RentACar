@@ -26,7 +26,7 @@ namespace Bussiness.Concrete
             try
             {
                 _dal.Add(entity);
-                return new SuccessResult();
+                return new SuccessResult(Messages.RecordAddedSuccessfully);
             }
             catch (Exception ex)
             {
@@ -40,7 +40,7 @@ namespace Bussiness.Concrete
             try
             {
                 _dal.Delete(entity);
-                return new SuccessResult();
+                return new SuccessResult(Messages.RecordDeletedSuccessfully);
             }
             catch (Exception)
             {
@@ -53,7 +53,11 @@ namespace Bussiness.Concrete
         {
             try
             {
-                return new SuccessDataResult<List<T>>(_dal.GetAll(filter));
+                var result = _dal.GetAll(filter);
+                if (result.Count == 0)
+                    return new ErrorDataResult<List<T>>(result);
+
+                return new SuccessDataResult<List<T>>(result);
             }
             catch (Exception)
             {
@@ -66,7 +70,11 @@ namespace Bussiness.Concrete
         {
             try
             {
-                return new SuccessDataResult<T>(_dal.Get(e=>e.Id == id));
+                var result = _dal.Get(e => e.Id == id);
+                if (result == null)
+                    return new ErrorDataResult<T>(Messages.RecordNotFound);
+                
+                return new SuccessDataResult<T>(result);
             }
             catch (Exception)
             {
@@ -80,7 +88,7 @@ namespace Bussiness.Concrete
             try
             {
                 _dal.Update(entity);
-                return new SuccessResult();
+                return new SuccessResult(Messages.RecordUpdatedSuccessfully);
             }
             catch (Exception)
             {

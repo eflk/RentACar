@@ -1,8 +1,9 @@
 ﻿using Bussiness.Abstract;
+using Bussiness.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
-using System;
-using System.Collections.Generic;
 
 namespace Bussiness.Concrete
 {
@@ -12,6 +13,17 @@ namespace Bussiness.Concrete
         {
         }
 
-     
+        [ValidationAspect(typeof(ColorValidator))]
+        public override IResult Add(Color entity)
+        {
+            return base.Add(entity);
+        }
+
+        [ValidationAspect(typeof(ColorValidator))]
+        public override IResult Update(Color entity)
+        {
+            return base.Update(entity);
+        }
+
     }
 }

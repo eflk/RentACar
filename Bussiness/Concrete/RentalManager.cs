@@ -1,8 +1,9 @@
 ﻿using Bussiness.Abstract;
+using Bussiness.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
-using System;
 
 namespace Bussiness.Concrete
 {
@@ -16,35 +17,43 @@ namespace Bussiness.Concrete
             _customerService = customerService;
         }
 
-        public IResult RentACar(int carId, int customerId, DateTime rentDate)
+        [ValidationAspect(typeof(RentalRentACarValidator))]
+        public IResult RentACar(Rental rental)
         {
-            var carResult = _carService.GetById(carId);
+            var carResult = _carService.GetById(rental.CarId);
             if (!carResult.Success) return new ErrorResult(carResult.Message);
 
-            var customerResult = _customerService.GetById(customerId);
+            var customerResult = _customerService.GetById(rental.CustomerId);
             if (!customerResult.Success) return new ErrorResult(customerResult.Message);
-
 
             if (base.GetAll((Rental c) => !c.ReturnDate.HasValue).Data.Count > 0) return new ErrorResult("The car already rented");
 
-            return base.Add(new Rental
-            {
-                CarId = carId,
-                CustomerId = customerId,
-                RentDate = rentDate
-            });
+            return base.Add(rental);
         }
 
-        public IResult DeliverACar(int rentalId, DateTime returnDate)
+        [ValidationAspect(typeof(RentalReturnACarValidator))]
+        public IResult ReturnACar(Rental rental)
         {
-            var rentalResult = base.GetById(rentalId);
+            var rentalResult = base.GetById(rental.Id);
             if (!rentalResult.Success) return new ErrorResult(rentalResult.Message);
             if (rentalResult.Data == null) return new ErrorResult("Incorrect rental id");
-            if (!rentalResult.Data.ReturnDate.Equals(null)) return new ErrorResult("Already delivered");
-            if (rentalResult.Data.RentDate.CompareTo(returnDate) > 0) return new ErrorResult("Deliver date cannot be earlier then rent date");
-            rentalResult.Data.ReturnDate = returnDate;
+            if (!rentalResult.Data.ReturnDate.Equals(null)) return new ErrorResult("Already returned");
+            if (rentalResult.Data.RentDate.CompareTo(rental.ReturnDate) > 0) return new ErrorResult("Return date cannot be earlier then rent date");
+            rentalResult.Data.ReturnDate = rental.ReturnDate;
 
             return base.Update(rentalResult.Data);
+        }
+
+        [ValidationAspect(typeof(RentalValidator))]
+        public override IResult Add(Rental entity)
+        {
+            return base.Add(entity);
+        }
+
+        [ValidationAspect(typeof(RentalValidator))]
+        public override IResult Update(Rental entity)
+        {
+            return base.Update(entity);
         }
     }
 }

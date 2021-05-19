@@ -62,7 +62,7 @@ namespace Test
                     case 3:
                         writeAll((IService<Car>)selectedManager);
                         Console.WriteLine("=================================");
-                        foreach (var carInfo in ((CarManager)selectedManager).GetCarInfos())
+                        foreach (var carInfo in ((CarManager)selectedManager).GetCarInfos()?.Data)
                         {
                             Console.WriteLine($"Car Description: {carInfo.CarName}");
                             Console.WriteLine($"BrandName: {carInfo.BrandName}");
@@ -115,11 +115,11 @@ namespace Test
 
         private static void RentalServiceTest()
         {
-            var rm = new RentalManager(new EfRentalDal(), new CarManager(new EfCarDal()), new CustomerManager(new EfCustomerDal()));
-            var result = rm.RentACar(2, 1, DateTime.Now);
-            Console.WriteLine($"Is Success: {result.Success}, Message: {result.Message} ");
-            result = rm.DeliverACar(5, DateTime.Now);
-            Console.WriteLine($"Is Success: {result.Success}, Message: {result.Message} ");
+            //var rm = new RentalManager(new EfRentalDal(), new CarManager(new EfCarDal()), new CustomerManager(new EfCustomerDal()));
+            //var result = rm.RentACar(2, 1, DateTime.Now);
+            //Console.WriteLine($"Is Success: {result.Success}, Message: {result.Message} ");
+            //result = rm.ReturnACar(5, DateTime.Now);
+            //Console.WriteLine($"Is Success: {result.Success}, Message: {result.Message} ");
             Console.ReadKey();
         }
 
