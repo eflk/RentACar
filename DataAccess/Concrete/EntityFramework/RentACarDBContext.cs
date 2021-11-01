@@ -12,12 +12,17 @@ namespace DataAccess.Concrete.EntityFramework
         public DbSet<User> Users { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Rental> Rentals { get; set; }
+        public DbSet<CarImage> CarImages { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB; Database=RentACar; Trusted_Connection=true");
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<CarImage>().Ignore(ci => ci.ImageFile);
+        }
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{   //Entity yi DB deki başka bir tabloya manual bağlamak istersen.
 

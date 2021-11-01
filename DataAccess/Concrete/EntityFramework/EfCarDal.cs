@@ -1,4 +1,5 @@
 ﻿using Core.DataAccess.EntityFramework;
+using Core.Utilities.FileSystem;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs;
@@ -20,7 +21,11 @@ namespace DataAccess.Concrete.EntityFramework
                                  BrandName = b.Name,
                                  CarName = c.Id.ToString(),
                                  ColorName = cl.Name,
-                                 DailyPrice = c.DailyPrice
+                                 DailyPrice = c.DailyPrice,
+                                 CarImages = (from ci in context.CarImages
+                                              where ci.CarId == c.Id
+                                              select FileSystemOperations.GetFileFromPath(ci.ImagePath).Data
+                                              ).ToList()
                              };
                 return result.ToList();
             }
