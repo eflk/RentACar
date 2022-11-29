@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using IResult = Core.Utilities.Results.IResult;
 
 namespace WebAPI.Controllers
 {
