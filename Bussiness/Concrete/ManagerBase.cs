@@ -28,7 +28,7 @@ namespace Bussiness.Concrete
                 _dal.Add(entity);
                 return new SuccessResult(Messages.RecordAddedSuccessfully);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
                 return new ErrorResult(Messages.SystemError);
